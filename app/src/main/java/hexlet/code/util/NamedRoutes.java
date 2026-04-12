@@ -10,12 +10,12 @@ public class NamedRoutes {
         return "/urls";
     }
 
-    public static String urlsUrl(Integer id) {
-        return urlsUrl(String.valueOf(id));
+    public static String urlsRoot(Integer id) {
+        return urlsRoot(String.valueOf(id));
     }
 
-    public static String urlsUrl(String id) {
-        return "/urls/" + id;
+    public static String urlsRoot(String id) {
+        return urlsRoot() + "/" + id;
     }
 
     public static String urlsUrlCheck(Integer id) {
@@ -23,6 +23,6 @@ public class NamedRoutes {
     }
 
     public static String urlsUrlCheck(String id) {
-        return "/urls/" + id + "/checks";
+        return urlsRoot(id) + "/checks";
     }
 }
