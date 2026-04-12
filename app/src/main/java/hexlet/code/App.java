@@ -12,8 +12,11 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
+import gg.jte.resolve.DirectoryCodeResolver;
 import gg.jte.resolve.ResourceCodeResolver;
+import hexlet.code.controller.RootController;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
@@ -28,10 +31,13 @@ public class App {
     }
 
     private static TemplateEngine createTemplateEngine() {
-        var classLoader = App.class.getClassLoader();
-        var codeResolver = new ResourceCodeResolver("templates", classLoader);
-        var templateEngine = TemplateEngine.create(codeResolver, Path.of("jte-classes"), ContentType.Html);
-        return templateEngine;
+        if ("jar".equals(App.class.getResource("App.class").getProtocol())) {
+            var codeResolver = new ResourceCodeResolver("templates", App.class.getClassLoader());
+            return TemplateEngine.create(codeResolver, ContentType.Html);
+        }
+
+        var codeResolver = new DirectoryCodeResolver(Path.of("src/main/resources/templates").toAbsolutePath());
+        return TemplateEngine.create(codeResolver, Path.of("jte-classes"), ContentType.Html);
     }
 
     public static Javalin getApp() throws SQLException, IOException {
@@ -51,14 +57,16 @@ public class App {
             }
         }
 
+        // Datasource push
         BaseRepository.setDataSource(dataSource);
 
+        // Javalin server creation
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get("/", (ctx) -> ctx.html("Hello World"));
+        app.get(NamedRoutes.root(), RootController::index);
 
         return app;
     }
