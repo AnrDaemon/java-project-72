@@ -26,7 +26,7 @@ plugins {
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
     id("com.github.ben-manes.versions") version "0.49.0"
     id("com.gradleup.shadow") version "8.3.10"
-    id("io.freefair.lombok") version "8.1.0"
+    id("io.freefair.lombok") version "8.10"
     id("org.sonarqube") version "4.0.0.2929"
     id("jacoco")
 }
