@@ -1,15 +1,15 @@
 package hexlet.code.dto;
 
+import java.util.List;
+
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import lombok.Getter;
-import lombok.AllArgsConstructor;
-
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UrlsShowPage extends BasePage {
-    private Url url;
-    private List<UrlCheck> checks;
+    private final Url url;
+    private final List<UrlCheck> checks;
 }

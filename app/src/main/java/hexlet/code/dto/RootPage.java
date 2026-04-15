@@ -1,12 +1,14 @@
 package hexlet.code.dto;
 
+import hexlet.code.model.Url;
 import lombok.Getter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class RootPage extends BasePage {
-    private String name;
+
+    protected String name = "Главная";
+
+    @Getter
+    @Setter
+    private Url url;
 }
