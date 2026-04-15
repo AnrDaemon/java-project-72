@@ -1,6 +1,9 @@
 package hexlet.code.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,4 +22,9 @@ public class UrlCheck {
     private String h1;
     private String description;
     private LocalDateTime createdAt;
+
+    public String getCreatedTimeFormatted(String language) {
+        return this.createdAt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withLocale(Locale.forLanguageTag(language)));
+    }
 }
