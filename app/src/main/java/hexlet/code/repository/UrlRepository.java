@@ -15,7 +15,8 @@ public class UrlRepository extends BaseRepository {
 
     public static void save(Url url) throws SQLException {
         String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (var conn = getDataSource().getConnection();
+                var statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, url.getName());
             statement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             statement.executeUpdate();
@@ -30,7 +31,7 @@ public class UrlRepository extends BaseRepository {
 
     public static Optional<Url> find(Integer id) throws SQLException {
         var sql = "SELECT * FROM urls WHERE id = ?";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql)) {
+        try (var conn = getDataSource().getConnection(); var statement = conn.prepareStatement(sql)) {
             statement.setInt(1, id);
             var result = statement.executeQuery();
 
@@ -40,7 +41,7 @@ public class UrlRepository extends BaseRepository {
 
     public static Optional<Url> findByName(String name) throws SQLException {
         var sql = "SELECT * FROM urls WHERE name = ?";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql)) {
+        try (var conn = getDataSource().getConnection(); var statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             var result = statement.executeQuery();
 
@@ -50,7 +51,7 @@ public class UrlRepository extends BaseRepository {
 
     public static List<Url> getEntities() throws SQLException {
         var sql = "SELECT * FROM urls";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql)) {
+        try (var conn = getDataSource().getConnection(); var statement = conn.prepareStatement(sql)) {
             var resultSet = statement.executeQuery();
             var result = new ArrayList<Url>();
             while (resultSet.next()) {

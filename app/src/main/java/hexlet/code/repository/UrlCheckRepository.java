@@ -18,8 +18,8 @@ public class UrlCheckRepository extends BaseRepository {
     public static void save(UrlCheck urlCheck) throws SQLException {
         var sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (var conn = getDataSource().getConnection();
+                var statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, urlCheck.getUrlId());
             statement.setInt(2, urlCheck.getStatusCode());
             statement.setString(3, urlCheck.getH1());
@@ -38,7 +38,7 @@ public class UrlCheckRepository extends BaseRepository {
 
     public static List<UrlCheck> findAllByUrlId(Integer urlId) throws SQLException {
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql)) {
+        try (var conn = getDataSource().getConnection(); var statement = conn.prepareStatement(sql)) {
             statement.setInt(1, urlId);
             var resultSet = statement.executeQuery();
             var result = new ArrayList<UrlCheck>();
@@ -52,16 +52,16 @@ public class UrlCheckRepository extends BaseRepository {
 
     public static Map<Integer, UrlCheck> findAllLatestChecks() throws SQLException {
         var sql = "WITH t AS (\n"
-                + "SELECT id, created_at o, MAX(created_at) r FROM url_checks GROUP BY url_id\n"
+                + "SELECT url_id, MAX(created_at) created_at FROM url_checks GROUP BY url_id\n"
                 + ")\n"
                 + "SELECT * FROM url_checks c\n"
-                + "INNER JOIN t ON t.id = c.id AND t.o = t.r";
-        try (var statement = getDataSource().getConnection().prepareStatement(sql)) {
+                + "INNER JOIN t ON t.url_id = c.url_id AND t.created_at = c.created_at";
+        try (var conn = getDataSource().getConnection(); var statement = conn.prepareStatement(sql)) {
             var resultSet = statement.executeQuery();
             var result = new HashMap<Integer, UrlCheck>();
             while (resultSet.next()) {
                 var row = readOne(resultSet);
-                result.put(row.getId(), row);
+                result.put(row.getUrlId(), row);
             }
 
             return result;
