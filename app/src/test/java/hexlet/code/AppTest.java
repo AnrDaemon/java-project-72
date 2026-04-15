@@ -84,7 +84,7 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(422);
             var count = UrlRepository.getEntities().size();
             assertThat(count).isEqualTo(1);
         });
