@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import org.jsoup.Jsoup;
 
+import hexlet.code.dto.RootPage;
 import hexlet.code.dto.UrlsIndexPage;
 import hexlet.code.dto.UrlsShowPage;
 import hexlet.code.model.Url;
@@ -40,16 +41,20 @@ public class UrlsController {
 
         var url = UrlRepository.findByName(normalizedUrl).orElse(null);
         if (url != null) {
+            ctx.status(HttpStatus.UNPROCESSABLE_CONTENT);
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("alert", "alert-warning");
-        } else {
-            var newUrl = new Url(normalizedUrl);
-            UrlRepository.save(newUrl);
-            ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.sessionAttribute("alert", "alert-success");
+            var page = new RootPage();
+            page.setUrl(url);
+            ctx.render("index.jte", model("page", page));
+            return;
         }
 
-        ctx.redirect(NamedRoutes.urlsRoot(), HttpStatus.SEE_OTHER);
+        url = new Url(normalizedUrl);
+        UrlRepository.save(url);
+        ctx.sessionAttribute("flash", "Страница успешно добавлена");
+        ctx.sessionAttribute("alert", "alert-success");
+        ctx.redirect(NamedRoutes.urlsRoot(url.getId()), HttpStatus.SEE_OTHER);
     }
 
     /**
@@ -74,6 +79,7 @@ public class UrlsController {
                 .orElseThrow(() -> new NotFoundResponse("Url not found"));
         var urlChecks = UrlCheckRepository.findAllByUrlId(id);
         var page = new UrlsShowPage(url, urlChecks);
+        page.setName(url.getName());
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setAlertType(ctx.consumeSessionAttribute("alert"));
         ctx.render("urls/show.jte", model("page", page));
