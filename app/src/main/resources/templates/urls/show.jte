@@ -3,7 +3,7 @@
 @import hexlet.code.repository.BaseRepository
 @param UrlsShowPage page
 
-@template.page(
+@template.layout.main(
     page=page,
     content=@`
         <div class="row">
@@ -21,7 +21,7 @@
                         </tr>
                         <tr>
                             <td>Дата создания</td>
-                            <td>${BaseRepository.formatTime(page.getUrl().getCreatedAt())}</td>
+                            <td>${page.getUrl().getCreatedTimeFormatted("ru")}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -31,7 +31,7 @@
                 </form>
                 <table class="table table-bordered table-hover mt-3">
                     <thead>
-                        <tr>
+                        <tr class="text-nowrap">
                             <th class="col-1">ID</th>
                             <th class="col-1">Код ответа</th>
                             <th>title</th>
@@ -49,7 +49,7 @@
                                     <td>${check.getTitle()}</td>
                                     <td>${check.getH1()}</td>
                                     <td>${check.getDescription()}</td>
-                                    <td>${BaseRepository.formatTime(check.getCreatedAt())}</td>
+                                    <td>${check.getCreatedTimeFormatted("ru")}</td>
                                 </tr>
                             @endfor
                         @endif

@@ -4,7 +4,7 @@
 
 @param UrlsIndexPage page
 
-@template.page(
+@template.layout.main(
     page=page,
     content=@`
         <div class="row">
@@ -23,10 +23,10 @@
                         @for(var url : page.getUrls())
                             <tr>
                                 <td>${url.getId()}</td>
-                                <td><a href="${NamedRoutes.urlsUrl(url.getId())}">${url.getName()}</a></td>
+                                <td><a href="${NamedRoutes.urlsRoot(url.getId())}">${url.getName()}</a></td>
                                 <td>
                                     @if(page.getChecks().get(url.getId()) != null)
-                                        ${UrlCheckRepository.formatTime(page.getChecks().get(url.getId()).getCreatedAt())}
+                                        ${page.getChecks().get(url.getId()).getCreatedTimeFormatted("ru")}
                                     @endif
                                 </td>
                                 <td>
