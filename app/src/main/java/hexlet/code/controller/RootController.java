@@ -11,6 +11,7 @@ public class RootController {
         var page = new RootPage();
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setAlertType(ctx.consumeSessionAttribute("alert"));
+        page.setUrl(ctx.consumeSessionAttribute("url"));
         ctx.render("index.jte", model("page", page));
     }
 }

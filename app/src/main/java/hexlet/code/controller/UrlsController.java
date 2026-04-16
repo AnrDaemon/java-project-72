@@ -41,12 +41,10 @@ public class UrlsController {
 
         var url = UrlRepository.findByName(normalizedUrl).orElse(null);
         if (url != null) {
-            ctx.status(HttpStatus.UNPROCESSABLE_CONTENT);
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("alert", "alert-warning");
-            var page = new RootPage();
-            page.setUrl(url);
-            ctx.render("index.jte", model("page", page));
+            ctx.sessionAttribute("url", url.getName());
+            ctx.redirect(NamedRoutes.root());
             return;
         }
 

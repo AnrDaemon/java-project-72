@@ -11,7 +11,7 @@
                 <form action="/urls" method="post" class="row">
                     <div class="col-8">
                         <label for="url-name" class="visually-hidden">Url для проверки</label>
-                        <input type="text" name="url" id="url-name" class="form-control form-control-lg" placeholder="https://www.example.com/"/>
+                        <input type="text" name="url" id="url-name" value="${page.getUrl()}" class="form-control form-control-lg" placeholder="https://www.example.com/"/>
                     </div>
                     <div class="col-2">
                         <button type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3">Проверить</button>

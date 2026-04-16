@@ -1,6 +1,5 @@
 package hexlet.code.dto;
 
-import hexlet.code.model.Url;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +9,5 @@ public class RootPage extends BasePage {
 
     @Getter
     @Setter
-    private Url url;
+    private String url;
 }
