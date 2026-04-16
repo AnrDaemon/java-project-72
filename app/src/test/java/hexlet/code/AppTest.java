@@ -15,7 +15,6 @@ import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
-import io.javalin.http.HttpStatus;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

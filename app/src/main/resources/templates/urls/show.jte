@@ -29,7 +29,7 @@
                 <form action="${NamedRoutes.urlsUrlCheck(page.getUrl().getId())}" method="post">
                     <button type="submit" class="btn btn-primary">Запустить проверку</button>
                 </form>
-                <table class="table table-bordered table-hover mt-3">
+                <table class="table table-bordered table-hover mt-3" data-test="checks">
                     <thead>
                         <tr class="text-nowrap">
                             <th class="col-1">ID</th>
