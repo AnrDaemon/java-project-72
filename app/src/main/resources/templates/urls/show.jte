@@ -34,8 +34,8 @@
                         <tr class="text-nowrap">
                             <th class="col-1">ID</th>
                             <th class="col-1">Код ответа</th>
-                            <th>title</th>
                             <th>h1</th>
+                            <th>title</th>
                             <th>description</th>
                             <th class="col-2">Дата проверки</th>
                         </tr>
@@ -46,8 +46,8 @@
                                 <tr>
                                     <td>${check.getId()}</td>
                                     <td>${check.getStatusCode()}</td>
-                                    <td>${check.getTitle()}</td>
                                     <td>${check.getH1()}</td>
+                                    <td>${check.getTitle()}</td>
                                     <td>${check.getDescription()}</td>
                                     <td>${check.getCreatedTimeFormatted("ru")}</td>
                                 </tr>
