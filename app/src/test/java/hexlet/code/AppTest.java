@@ -15,6 +15,7 @@ import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
+import io.javalin.http.HttpStatus;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -84,7 +85,7 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.SEE_OTHER.getCode());
             var count = UrlRepository.getEntities().size();
             assertThat(count).isEqualTo(1);
         });

@@ -8,7 +8,6 @@ import java.sql.SQLException;
 
 import org.jsoup.Jsoup;
 
-import hexlet.code.dto.RootPage;
 import hexlet.code.dto.UrlsIndexPage;
 import hexlet.code.dto.UrlsShowPage;
 import hexlet.code.model.Url;
@@ -44,14 +43,12 @@ public class UrlsController {
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("alert", "alert-warning");
             ctx.sessionAttribute("url", url.getName());
-            ctx.redirect(NamedRoutes.root());
-            return;
+        } else {
+            url = new Url(normalizedUrl);
+            UrlRepository.save(url);
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("alert", "alert-success");
         }
-
-        url = new Url(normalizedUrl);
-        UrlRepository.save(url);
-        ctx.sessionAttribute("flash", "Страница успешно добавлена");
-        ctx.sessionAttribute("alert", "alert-success");
         ctx.redirect(NamedRoutes.urlsRoot(url.getId()), HttpStatus.SEE_OTHER);
     }
 
