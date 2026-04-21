@@ -46,9 +46,9 @@
                                 <tr>
                                     <td>${check.getId()}</td>
                                     <td>${check.getStatusCode()}</td>
-                                    <td>${check.getH1()}</td>
-                                    <td>${check.getTitle()}</td>
-                                    <td>${check.getDescription()}</td>
+                                    <td>@template.filters.truncate(value = check.getH1())</td>
+                                    <td>@template.filters.truncate(value = check.getTitle())</td>
+                                    <td>@template.filters.truncate(value = check.getDescription())</td>
                                     <td>${check.getCreatedTimeFormatted("ru")}</td>
                                 </tr>
                             @endfor
