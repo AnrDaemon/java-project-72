@@ -12,5 +12,6 @@ public abstract class BasePage {
     private String flash;
     private String alertType;
 
+    @SuppressWarnings(value = "checkstyle:VisibilityModifier")
     protected String name = "";
 }

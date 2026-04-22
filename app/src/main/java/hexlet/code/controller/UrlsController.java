@@ -26,7 +26,9 @@ import kong.unirest.core.UnirestException;
 public class UrlsController {
 
     /**
-     * /urls/ POST action
+     * /urls/ POST action.
+     *
+     * @param ctx Request context.
      */
     public static void create(Context ctx) throws SQLException {
         String normalizedUrl;
@@ -57,7 +59,9 @@ public class UrlsController {
     }
 
     /**
-     * /urls/ GET action
+     * /urls/ GET action.
+     *
+     * @param ctx Request context.
      */
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
@@ -70,7 +74,9 @@ public class UrlsController {
     }
 
     /**
-     * /urls/{id} GET action
+     * /urls/{id} GET action.
+     *
+     * @param ctx Request context.
      */
     public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Integer.class).get();
@@ -85,7 +91,10 @@ public class UrlsController {
     }
 
     /**
-     * /urls/{id}/check POST action
+     * /urls/{id}/check POST action.
+     *
+     * @param ctx Request context.
+     * @throws SQLException
      */
     public static void check(Context ctx) throws SQLException {
         var urlId = ctx.pathParamAsClass("id", Integer.class).get();
@@ -105,7 +114,7 @@ public class UrlsController {
             var description = elementDescription == null ? "" : elementDescription.attr("content");
             check.setDescription(description);
             UrlCheckRepository.save(check);
-            if (response.getStatus() != 200) {
+            if (response.getStatus() != HttpStatus.OK.getCode()) {
                 throw new RuntimeException("Произошла ошибка при проверке");
             }
             ctx.sessionAttribute("flash", "Страница успешно проверена");

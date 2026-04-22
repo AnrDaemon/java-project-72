@@ -19,6 +19,12 @@ public class Url {
     private final String name;
     private LocalDateTime createdAt;
 
+    /**
+     * Returns the createdAt time formatted according to language provided.
+     *
+     * @param language The locale name, like "en".
+     * @return createdAt time formatted according to language provided.
+     */
     public String getCreatedTimeFormatted(String language) {
         return this.createdAt.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
                 .withLocale(Locale.forLanguageTag(language)));

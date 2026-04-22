@@ -14,6 +14,7 @@ import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
+import io.javalin.http.HttpStatus;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -24,7 +25,13 @@ public class AppTest extends FileReadingTest {
 
     private static MockWebServer mockWebServer;
 
-    @SuppressWarnings("checkstyle:MagicNumber")
+    /**
+     * Starts a mockwebserver and queues a response to the "GET /" request.
+     *
+     * @param response The expected server response.
+     * @return The started webserver address.
+     * @throws IOException
+     */
     public static String mockWebserverUrl(MockResponse response) throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.enqueue(response);
@@ -33,6 +40,11 @@ public class AppTest extends FileReadingTest {
         return mockWebServer.url("/").toString();
     }
 
+    /**
+     * Shuts down a mockwebserver if started.
+     *
+     * @throws IOException
+     */
     @AfterEach
     public void shutdownWebserver() throws IOException {
         if (mockWebServer != null) {
@@ -49,7 +61,7 @@ public class AppTest extends FileReadingTest {
     public void testMainPage() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.root());
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("Бесплатно проверяйте сайты");
         });
     }
@@ -59,7 +71,7 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("https://www.example.com");
             var url = UrlRepository.findByName("https://www.example.com").get();
             assertThat(url.getName()).isEqualTo("https://www.example.com");
@@ -71,7 +83,7 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=htt:example";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(422);
+            assertThat(response.code()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT.getCode());
             assertThat(response.body().string()).contains("Некорректный URL");
         });
     }
@@ -83,7 +95,7 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             var count = UrlRepository.getEntities().size();
             assertThat(count).isEqualTo(1);
         });
@@ -95,7 +107,7 @@ public class AppTest extends FileReadingTest {
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.urlsRoot());
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("https://www.example.com");
         });
     }
@@ -106,16 +118,17 @@ public class AppTest extends FileReadingTest {
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.urlsRoot(url.getId()));
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("https://www.example.com");
         });
     }
 
     @Test
-    public void testUserNotFound() {
+    @SuppressWarnings(value = "checkstyle:MagicNumber")
+    public void testUrlNotFound() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.urlsRoot(99999));
-            assertThat(response.code()).isEqualTo(404);
+            assertThat(response.code()).isEqualTo(HttpStatus.NOT_FOUND.getCode());
         });
     }
 
@@ -123,12 +136,12 @@ public class AppTest extends FileReadingTest {
     public void testCheckUrl() throws SQLException, IOException {
         var page = mockWebserverUrl(new MockResponse()
                 .setBody(readFixture("fixtures/testHtml.html"))
-                .setResponseCode(200));
+                .setResponseCode(HttpStatus.OK.getCode()));
         var url = new Url(page);
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             var lastUrlCheck = UrlCheckRepository.findAllByUrlId(url.getId()).getLast();
             assertThat(lastUrlCheck.getH1()).isEqualTo("Heading 1");
             assertThat(lastUrlCheck.getTitle()).isEqualTo("Test HTML");
@@ -141,14 +154,14 @@ public class AppTest extends FileReadingTest {
     public void testCheckEmptyResponse() throws SQLException, IOException {
         var page = mockWebserverUrl(new MockResponse()
                 .setBody("")
-                .setResponseCode(200));
+                .setResponseCode(HttpStatus.OK.getCode()));
         var url = new Url(page);
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             var lastUrlCheck = UrlCheckRepository.findAllByUrlId(url.getId()).getLast();
-            assertThat(lastUrlCheck.getStatusCode()).isEqualTo(200);
+            assertThat(lastUrlCheck.getStatusCode()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(lastUrlCheck.getH1()).isEqualTo("");
             assertThat(lastUrlCheck.getTitle()).isEqualTo("");
             assertThat(lastUrlCheck.getDescription()).isEqualTo("");
@@ -159,12 +172,12 @@ public class AppTest extends FileReadingTest {
     public void testCheckBadReply() throws SQLException, IOException {
         var page = mockWebserverUrl(new MockResponse()
                 .setBody("")
-                .setResponseCode(500));
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.getCode()));
         var url = new Url(page);
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("Произошла ошибка при проверке");
         });
     }
@@ -175,7 +188,7 @@ public class AppTest extends FileReadingTest {
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
-            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.code()).isEqualTo(HttpStatus.OK.getCode());
             assertThat(response.body().string()).contains("Произошла ошибка при проверке");
         });
     }

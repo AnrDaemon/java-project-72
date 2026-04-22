@@ -5,6 +5,7 @@ import lombok.Setter;
 
 public class RootPage extends BasePage {
 
+    @SuppressWarnings(value = "checkstyle:VisibilityModifier")
     protected String name = "Главная";
 
     @Getter

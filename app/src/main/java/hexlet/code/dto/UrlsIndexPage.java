@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UrlsIndexPage extends BasePage {
 
+    @SuppressWarnings(value = "checkstyle:VisibilityModifier")
     protected String name = "Ссылки";
 
     private final List<Url> urls;
