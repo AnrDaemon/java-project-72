@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import org.jsoup.Jsoup;
 
+import hexlet.code.dto.RootPage;
 import hexlet.code.dto.UrlsIndexPage;
 import hexlet.code.dto.UrlsShowPage;
 import hexlet.code.model.Url;
@@ -32,9 +33,12 @@ public class UrlsController {
         try {
             normalizedUrl = UrlParser.getNormalizedUrl(ctx.formParam("url"));
         } catch (MalformedURLException | URISyntaxException e) {
-            ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.sessionAttribute("alert", "alert-danger");
-            ctx.redirect(NamedRoutes.root());
+            var page = new RootPage();
+            page.setFlash("Некорректный URL");
+            page.setAlertType("alert-danger");
+            page.setUrl(ctx.formParam("url"));
+            ctx.status(HttpStatus.UNPROCESSABLE_CONTENT);
+            ctx.render("index.jte", model("page", page));
             return;
         }
 
