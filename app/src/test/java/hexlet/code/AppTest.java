@@ -148,6 +148,7 @@ public class AppTest extends FileReadingTest {
             var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
             assertThat(response.code()).isEqualTo(200);
             var lastUrlCheck = UrlCheckRepository.findAllByUrlId(url.getId()).getLast();
+            assertThat(lastUrlCheck.getStatusCode()).isEqualTo(200);
             assertThat(lastUrlCheck.getH1()).isEqualTo("");
             assertThat(lastUrlCheck.getTitle()).isEqualTo("");
             assertThat(lastUrlCheck.getDescription()).isEqualTo("");
