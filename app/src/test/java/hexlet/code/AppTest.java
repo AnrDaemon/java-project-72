@@ -5,8 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,20 +24,20 @@ public class AppTest extends FileReadingTest {
 
     private static MockWebServer mockWebServer;
 
-    @BeforeAll
     @SuppressWarnings("checkstyle:MagicNumber")
-    public static void beforeAll() throws IOException {
+    public static String mockWebserverUrl(MockResponse response) throws IOException {
         mockWebServer = new MockWebServer();
-        var mockResponse = new MockResponse()
-                .setBody(readFixture("fixtures/testHtml.html"))
-                .setResponseCode(200);
-        mockWebServer.enqueue(mockResponse);
+        mockWebServer.enqueue(response);
         mockWebServer.start();
+
+        return mockWebServer.url("/").toString();
     }
 
-    @AfterAll
-    public static void afterAll() throws IOException {
-        mockWebServer.shutdown();
+    @AfterEach
+    public void shutdownWebserver() throws IOException {
+        if (mockWebServer != null) {
+            mockWebServer.shutdown();
+        }
     }
 
     @BeforeEach
@@ -121,8 +120,10 @@ public class AppTest extends FileReadingTest {
     }
 
     @Test
-    public void testCheckUrl() throws SQLException {
-        var page = mockWebServer.url("/").toString();
+    public void testCheckUrl() throws SQLException, IOException {
+        var page = mockWebserverUrl(new MockResponse()
+                .setBody(readFixture("fixtures/testHtml.html"))
+                .setResponseCode(200));
         var url = new Url(page);
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
@@ -133,6 +134,23 @@ public class AppTest extends FileReadingTest {
             assertThat(lastUrlCheck.getTitle()).isEqualTo("Test HTML");
             assertThat(lastUrlCheck.getUrlId()).isEqualTo(1);
             assertThat(lastUrlCheck.getDescription()).isEqualTo("Test check url");
+        });
+    }
+
+    @Test
+    public void testCheckEmptyResponse() throws SQLException, IOException {
+        var page = mockWebserverUrl(new MockResponse()
+                .setBody("")
+                .setResponseCode(200));
+        var url = new Url(page);
+        UrlRepository.save(url);
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
+            assertThat(response.code()).isEqualTo(200);
+            var lastUrlCheck = UrlCheckRepository.findAllByUrlId(url.getId()).getLast();
+            assertThat(lastUrlCheck.getH1()).isEqualTo("");
+            assertThat(lastUrlCheck.getTitle()).isEqualTo("");
+            assertThat(lastUrlCheck.getDescription()).isEqualTo("");
         });
     }
 }
