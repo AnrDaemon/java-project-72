@@ -154,4 +154,29 @@ public class AppTest extends FileReadingTest {
             assertThat(lastUrlCheck.getDescription()).isEqualTo("");
         });
     }
+
+    /** @Test */
+    public void testCheckBadReply() throws SQLException, IOException {
+        var page = mockWebserverUrl(new MockResponse()
+                .setBody("")
+                .setResponseCode(500));
+        var url = new Url(page);
+        UrlRepository.save(url);
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
+            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains("Произошла ошибка при проверке");
+        });
+    }
+
+    /** @Test */
+    public void testCheckNoReply() throws SQLException, IOException {
+        var url = new Url("http://wrong.test");
+        UrlRepository.save(url);
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post(NamedRoutes.urlsUrlCheck(url.getId()));
+            assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains("Произошла ошибка при проверке");
+        });
+    }
 }

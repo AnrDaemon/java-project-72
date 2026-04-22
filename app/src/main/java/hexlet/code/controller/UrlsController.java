@@ -105,10 +105,13 @@ public class UrlsController {
             var description = elementDescription == null ? "" : elementDescription.attr("content");
             check.setDescription(description);
             UrlCheckRepository.save(check);
+            if (response.getStatus() != 200) {
+                throw new RuntimeException("Произошла ошибка при проверке");
+            }
             ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("alert", "alert-success");
         } catch (UnirestException e) {
-            ctx.sessionAttribute("flash", "Некорректный адрес");
+            ctx.sessionAttribute("flash", "Произошла ошибка при проверке");
             ctx.sessionAttribute("alert", "alert-danger");
         } catch (Exception e) {
             ctx.sessionAttribute("flash", e.getMessage());
