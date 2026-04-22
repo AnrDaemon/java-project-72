@@ -95,10 +95,10 @@ public class UrlsController {
             var document = Jsoup.parse(html);
             check.setTitle(document.title());
             var elementH1 = document.selectFirst("h1");
-            var h1 = elementH1 == null ? null : elementH1.text();
+            var h1 = elementH1 == null ? "" : elementH1.text();
             check.setH1(h1);
             var elementDescription = document.selectFirst("meta[name=description]");
-            var description = elementDescription == null ? null : elementDescription.attr("content");
+            var description = elementDescription == null ? "" : elementDescription.attr("content");
             check.setDescription(description);
             UrlCheckRepository.save(check);
             ctx.sessionAttribute("flash", "Страница успешно проверена");
