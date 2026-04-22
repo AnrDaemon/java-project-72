@@ -71,8 +71,8 @@ public class AppTest extends FileReadingTest {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=htt:example";
             var response = client.post(NamedRoutes.urlsRoot(), requestBody);
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).contains("Бесплатно проверяйте сайты");
+            assertThat(response.code()).isEqualTo(422);
+            assertThat(response.body().string()).contains("Некорректный URL");
         });
     }
 
