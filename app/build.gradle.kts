@@ -29,6 +29,7 @@ plugins {
     id("io.freefair.lombok") version "8.10"
     id("org.sonarqube") version "4.0.0.2929"
     id("jacoco")
+    id("gg.jte.gradle") version "3.2.1"
 }
 
 dependencies {
@@ -52,6 +53,15 @@ dependencies {
 
 application {
     mainClass.set("hexlet.code.App")
+}
+
+jte {
+    generate()
+}
+
+configure<gg.jte.gradle.JteExtension> {
+    sourceDirectory.set(project.layout.projectDirectory.dir("src/main/resources/templates").asFile.toPath())
+    generate()
 }
 
 checkstyle {
@@ -101,6 +111,14 @@ tasks.jar {
             "Implementation-Version" to project.version
         )
     }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    dependsOn("generateJte")
+}
+
+tasks.matching { it.name == "generateEffectiveLombokConfig" }.configureEach {
+    dependsOn("generateJte")
 }
 
 tasks.withType<JavaCompile> {
