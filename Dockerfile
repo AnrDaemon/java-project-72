@@ -4,14 +4,10 @@ FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
-RUN --mount=type=bind,source=app,target=. \
-    --mount=type=cache,target=/app/.gradle \
-    --mount=type=cache,target=/app/bin \
-    --mount=type=cache,target=/app/build \
+RUN --mount=type=bind,source=app,target=.,rw \
     --mount=type=cache,target=/root/.gradle <<BUILD
     set -e
     mkdir -p /build
-    chmod +x ./gradlew
     ./gradlew clean installShadowDist --stacktrace --no-daemon
     cp build/libs/app-1.0-SNAPSHOT-all.jar /build/
 BUILD
