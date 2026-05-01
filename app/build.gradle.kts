@@ -120,3 +120,7 @@ tasks.jacocoTestReport {
 tasks.register("install") {
     dependsOn("installDist")
 }
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    mergeServiceFiles()
+}
