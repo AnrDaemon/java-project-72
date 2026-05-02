@@ -33,8 +33,7 @@ public class App {
 
     private static TemplateEngine createTemplateEngine() {
         if ("jar".equals(App.class.getResource("App.class").getProtocol())) {
-            var codeResolver = new ResourceCodeResolver("templates", App.class.getClassLoader());
-            return TemplateEngine.create(codeResolver, ContentType.Html);
+            return TemplateEngine.createPrecompiled(ContentType.Html);
         }
 
         var codeResolver = new DirectoryCodeResolver(Path.of("src/main/resources/templates").toAbsolutePath());
