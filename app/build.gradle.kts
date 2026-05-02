@@ -56,7 +56,7 @@ application {
 }
 
 jte {
-    generate()
+    precompile()
 }
 
 configure<gg.jte.gradle.JteExtension> {
@@ -140,5 +140,8 @@ tasks.register("install") {
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    from("jte-classes") {
+        include("**/*.class")
+    }
     mergeServiceFiles()
 }
