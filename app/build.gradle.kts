@@ -84,6 +84,8 @@ sonar {
         property("sonar.projectKey", "AnrDaemon_java-project-72")
         property("sonar.organization", "anrdaemon")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.exclusions", "**/gg/jte/generated/**")
+        property("sonar.coverage.exclusions", "**/gg/jte/generated/**")
     }
 }
 
